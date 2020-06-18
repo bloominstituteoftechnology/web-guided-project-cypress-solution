@@ -1,7 +1,6 @@
 {
   "name": "web-guided-project-cypress-solution",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "start": "parcel src/index.html",
@@ -25,5 +24,13 @@
     "eslint-plugin-react": "^7.20.0",
     "less": "^3.11.3",
     "parcel-bundler": "^1.12.4"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LambdaSchool/web-guided-project-cypress-solution.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LambdaSchool/web-guided-project-cypress-solution/issues"
+  },
+  "homepage": "https://github.com/LambdaSchool/web-guided-project-cypress-solution#readme"
 }
