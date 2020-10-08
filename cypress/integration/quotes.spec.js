@@ -3,7 +3,7 @@ describe('Quotes App', () => {
     // Each test needs 'fresh state' !!
     // Tests should never rely on state left by previous tests !!
     // Every test must be able to work in isolation !!
-    cy.visit('http://localhost:1234')
+    cy.visit('http://localhost:1234') // CAREFUL, SOME STUDENTS MIGHT BE ON A DIFFERENT PORT
   })
 
   // Helpers to centralize the CSS selectors and clean up the tests a bit.
