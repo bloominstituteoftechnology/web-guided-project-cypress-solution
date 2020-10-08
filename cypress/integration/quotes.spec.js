@@ -37,6 +37,7 @@ describe('Quotes App', () => {
   })
 
   describe('Filling out the inputs and cancelling', () => {
+    // We use optional "describe" blocks to organize and group our tests.
     it('can navigate to the site', () => {
       cy.url().should('include', 'localhost')
     })
@@ -75,14 +76,14 @@ describe('Quotes App', () => {
 
   describe('Adding a new quote', () => {
     it('can submit and delete a new quote', () => {
-      // It's important that state be the same at the beginning of each test
-      // which is why we delete the newly created post immediately.
-      // If we are not careful with this, we'll get lots of false positives and negatives.
-      // Manually delete "garbage" quotes if necessary to ensure we always start with the original 3 quotes.
-      // Explain that in real world, fresh testing databases with seeded data would be spun up for each test run.
       textInput().type('Have fun!')
       authorInput().type('Gabe')
       submitBtn().click()
+      // It's important that state be the same at the beginning of each test
+      // which is why we delete the newly created post immediately.
+      // If we are not careful with this, we'll get lots of false positives and negatives.
+      // Restart the server script if necessary to go back to the original 3 quotes.
+      // Explain that in real world, a fresh testing database with predetermined data would be spun up for each test run.
       cy.contains('Have fun!').siblings('button:nth-of-type(2)').click()
       cy.contains('Have fun!').should('not.exist')
     })
