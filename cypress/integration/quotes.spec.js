@@ -87,6 +87,16 @@ describe('Quotes App', () => {
       cy.contains('Have fun!').siblings('button:nth-of-type(2)').click()
       cy.contains('Have fun!').should('not.exist')
     })
+
+    it('variation of can submit a new quote', () => {
+      cy.contains(/have fun/).should('not.exist')
+      textInput().type('have fun')
+      authorInput().type('Gabe')
+      submitBtn().click()
+      cy.contains(/have fun/).should('exist')
+      cy.contains(/have fun/).next().next().click()
+      cy.contains(/have fun/).should('not.exist')
+    })
   })
 
   describe('Editing an existing quote', () => {
