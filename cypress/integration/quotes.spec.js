@@ -1,101 +1,112 @@
-describe('Inputs and submit button', () => {
-  it('can navigate to the site', () => {
+describe('Quotes App', () => {
+  beforeEach(() => {
+    // Each test needs 'fresh state' !!
+    // Tests should never rely on state left by previous tests !!
+    // Every test must be able to work in isolation !!
     cy.visit('http://localhost:1234')
-    cy.url().should('include', 'localhost')
   })
 
-  it('submit button is disabled', () => {
-    cy.get('button#submitBtn')
-      .should('be.disabled')
+  // Helpers to centralize the CSS selectors and clean up the tests a bit.
+  const textInput = () => cy.get('input[name=text]')
+  const authorInput = () => cy.get('input[name=author]')
+  const foobarInput = () => cy.get('input[name=foobar]')
+  const submitBtn = () => cy.get(`button[id="submitBtn"]`)
+  const cancelBtn = () => cy.get(`button[id="cancelBtn"]`)
+
+  it('sanity check to make sure tests work', () => {
+    // "it" is a test.
+    // "expect" is an assertion.
+    // There can be several assertions per test, but they all need to relate
+    // to "the one thing" we're testing.
+    expect(1 + 2).to.equal(3)
+    expect(2 + 2).not.to.equal(5) // strict ===
+    expect({}).not.to.equal({})   // strict ===
+    expect({}).to.eql({})         // not strict
   })
 
-  it('can type a text for a new quote', () => {
-    cy.get('input[name="text"]')
-      .type('Have fun!')
-      .should('have.value', 'Have fun!')
+  it('the proper elements are showing', () => {
+    textInput().should('exist')
+    foobarInput().should('not.exist')
+    authorInput().should('exist')
+    submitBtn().should('exist')
+    cancelBtn().should('exist')
+    // As usual, UI testing is easier if the HTML elements have unique identifiers on them.
+    // This is selecting by text content, instead of by CSS selector:
+    cy.contains('Submit Quote').should('exist')
+    cy.contains(/submit quote/i).should('exist')
   })
 
-  it('can type an author for a new quote', () => {
-    cy.get('input[name="author"]')
-      .type('Gabe')
-      .should('have.value', 'Gabe')
+  describe('Filling out the inputs and cancelling', () => {
+    it('can navigate to the site', () => {
+      cy.url().should('include', 'localhost')
+    })
+
+    it('submit button starts out disabled', () => {
+      submitBtn().should('be.disabled')
+    })
+
+    it('can type in the inputs', () => {
+      textInput()
+        .should('have.value', '')
+        .type('Be nice to the CSS expert')
+        .should('have.value', 'Be nice to the CSS expert')
+
+      authorInput()
+        .should('have.value', '')
+        .type('Gabe!')
+        .should('have.value', 'Gabe!')
+    })
+
+    it('the submit button enables when both inputs are filled out', () => {
+      authorInput().type('Gabe')
+      textInput().type('Have fun!')
+      submitBtn().should('not.be.disabled')
+    })
+
+    it('the cancel button can reset the inputs and disable the submit button', () => {
+      authorInput().type('Gabe')
+      textInput().type('Have fun!')
+      cancelBtn().click()
+      textInput().should('have.value', '')
+      authorInput().should('have.value', '')
+      submitBtn().should('be.disabled')
+    })
   })
 
-  it('button is not disabled any more', () => {
-    cy.get('button#submitBtn')
-      .should('not.be.disabled')
+  describe('Adding a new quote', () => {
+    it('can submit and delete a new quote', () => {
+      // It's important that state be the same at the beginning of each test
+      // which is why we delete the newly created post immediately.
+      // If we are not careful with this, we'll get lots of false positives and negatives.
+      // Manually delete "garbage" quotes if necessary to ensure we always start with the original 3 quotes.
+      // Explain that in real world, fresh testing databases with seeded data would be spun up for each test run.
+      textInput().type('Have fun!')
+      authorInput().type('Gabe')
+      submitBtn().click()
+      cy.contains('Have fun!').siblings('button:nth-of-type(2)').click()
+      cy.contains('Have fun!').should('not.exist')
+    })
   })
 
-  it('can cancel the new quote', () => {
-    cy.get('button#cancelBtn').click()
-  })
-
-  it('text input is back to blank', () => {
-    cy.get('input[name="text"]')
-      .should('have.value', '')
-  })
-
-  it('author input is back to blank', () => {
-    cy.get('input[name="author"]')
-      .should('have.value', '')
-  })
-
-  it('button is back to being disabled', () => {
-    cy.get('button#submitBtn')
-      .should('be.disabled')
-  })
-})
-
-
-describe('Adding a new quote', () => {
-  it('can navigate to the site', () => {
-    cy.visit('http://localhost:1234')
-    cy.url().should('include', 'localhost')
-  })
-
-  it('can submit a new quote', () => {
-    cy.get('input[name="text"]')
-      .type('Have fun!')
-
-    cy.get('input[name="author"]')
-      .type('Gabe')
-
-    cy.get('button#submitBtn').click()
-    cy.contains('Have fun!')
-  })
-
-  it('can delete newly created quote', () => {
-    cy.contains('Have fun!').siblings('button:nth-of-type(2)').click()
-    cy.contains('Have fun!').should('not.exist')
-  })
-})
-
-describe('Editing an existing quote', () => {
-  it('can navigate to the site', () => {
-    cy.visit('http://localhost:1234')
-    cy.url().should('include', 'localhost')
-  })
-
-  it('can submit a new quote', () => {
-    cy.get('input[name="text"]').type('Use Postman')
-    cy.get('input[name="author"]').type('Gabriel')
-    cy.get('button#submitBtn').click()
-  })
-
-  it('can edit newly created quote', () => {
-    cy.contains('Use Postman').siblings('button:nth-of-type(1)').click()
-    cy.get('input[name="text"]').should('have.value', 'Use Postman')
-    cy.get('input[name="author"]').should('have.value', 'Gabriel')
-
-    cy.get('input[name="text"]').type(' for realz')
-    cy.get('input[name="author"]').type(' Cabrejas')
-
-    cy.get('button#submitBtn').click()
-  })
-
-  it('can delete newly edited quote', () => {
-    cy.contains('Use Postman for realz (Gabriel Cabrejas)')
-    cy.contains('Use Postman for realz (Gabriel Cabrejas)').next().next().click()
-    cy.contains('Use Postman for realz (Gabriel Cabrejas)').should('not.exist')
+  describe('Editing an existing quote', () => {
+    it('can edit a quote', () => {
+      // Baking a new quote and submitting it.
+      textInput().type('Use Postman')
+      authorInput().type('Gabriel')
+      submitBtn().click()
+      // Hitting the edit button and checking inputs.
+      cy.contains('Use Postman').siblings('button:nth-of-type(1)').click()
+      textInput().should('have.value', 'Use Postman')
+      authorInput().should('have.value', 'Gabriel')
+      // Editing the quote and submitting changes.
+      textInput().type(' for realz')
+      authorInput().type(' Cabrejas')
+      submitBtn().click()
+      // Checking that the changes stuck.
+      cy.contains('Use Postman for realz (Gabriel Cabrejas)')
+      // Hitting the delete button for the edited quote to leave state the way it was. IMPORTANT !!
+      cy.contains('Use Postman for realz (Gabriel Cabrejas)').next().next().click()
+      cy.contains('Use Postman for realz (Gabriel Cabrejas)').should('not.exist')
+    })
   })
 })
