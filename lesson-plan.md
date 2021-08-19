@@ -19,6 +19,7 @@
 * Show the area of the Cypress.io website where we can find info about syntax.
 * Explain how we can perform global searches in the project, to also find out about syntax in the `examples` folder.
 * Probably turn off auto-save on VSCode, to prevent constant re-runs of the tests.
+* Also probably a good idea to delete the `examples` folder so that we don't have a million tests running and can focus just on our quotes tests.
 * Spin up all scripts, and explain the window that pops up when we run `npm test`
 * Show how we write our tests inside the `cypress/integration` folder.
 * Write your tests inside the `quotes.spec.js` file.
